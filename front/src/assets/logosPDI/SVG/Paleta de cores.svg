@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #becccc;
+      }
+
+      .cls-2 {
+        fill: #f5f749;
+      }
+
+      .cls-3 {
+        fill: #fa441a;
+      }
+
+      .cls-4 {
+        fill: #550c18;
+      }
+
+      .cls-5 {
+        fill: #f89069;
+      }
+
+      .cls-6 {
+        fill: #4d4e03;
+      }
+
+      .cls-7 {
+        fill: #03254d;
+      }
+
+      .cls-8 {
+        fill: #b5446e;
+      }
+
+      .cls-9 {
+        letter-spacing: -.05em;
+      }
+
+      .cls-10 {
+        font-family: HelveticaNeue-Medium, 'Helvetica Neue';
+        font-size: 45px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" x="366.33" y="149.94" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-7" x="364.43" y="549.35" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-3" x="692.18" y="549.35" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-5" x="692.18" y="149.94" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-4" x="1010.27" y="549.35" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-8" x="1023.96" y="149.94" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-2" x="1330.26" y="149.94" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <rect class="cls-6" x="1328.35" y="549.35" width="243.16" height="243.16" rx="121.58" ry="121.58"/>
+  <text class="cls-10" transform="translate(392.92 482.56)"><tspan x="0" y="0">BECCCC</tspan></text>
+  <text class="cls-10" transform="translate(409.12 880.11)"><tspan x="0" y="0">03254D</tspan></text>
+  <text class="cls-10" transform="translate(737.87 479.43)"><tspan x="0" y="0">F89069</tspan></text>
+  <text class="cls-10" transform="translate(734.11 876.98)"><tspan class="cls-9" x="0" y="0">F</tspan><tspan x="24.21" y="0">A441A</tspan></text>
+  <text class="cls-10" transform="translate(1055.49 479.69)"><tspan x="0" y="0">B5446E</tspan></text>
+  <text class="cls-10" transform="translate(1056.75 877.25)"><tspan x="0" y="0">550C18</tspan></text>
+  <text class="cls-10" transform="translate(1384.67 476.56)"><tspan x="0" y="0">F5F749</tspan></text>
+  <text class="cls-10" transform="translate(1380.93 874.11)"><tspan x="0" y="0">4D4E03</tspan></text>
+</svg>
