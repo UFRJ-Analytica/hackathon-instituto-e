@@ -1,27 +1,24 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import AppLayout from "@/pages/app"
-import DashboardPage from "@/pages/app/dashboard"
-import CarbonMarketPage from "@/pages/app/mercado-de-carbono"
-import PredictivePage from "@/pages/app/preditivo"
-import LandingPage from "@/pages/landingpage"
+import InicioPage from "@/pages/app/inicio"
+import InfraestruturaPage from "@/pages/app/infraestrutura"
+import IndustriasPage from "@/pages/app/industrias"
+import PIDPage from "@/pages/app/pid"
+import SaibaMaisPage from "@/pages/app/saiba-mais"
 
 export function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/app" element={<AppLayout />}>
-          <Route index element={<Navigate replace to="/app/dashboard" />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="preditivo" element={<PredictivePage />} />
-          <Route path="mercado-de-carbono" element={<CarbonMarketPage />} />
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<InicioPage />} />
+          <Route path="infraestrutura" element={<InfraestruturaPage />} />
+          <Route path="industrias" element={<IndustriasPage />} />
+          <Route path="pid" element={<PIDPage />} />
+          <Route path="saiba-mais" element={<SaibaMaisPage />} />
         </Route>
-        <Route
-          path="/dashboard"
-          element={<Navigate replace to="/app/dashboard" />}
-        />
-        <Route path="*" element={<Navigate replace to="/" />} />
+        <Route path="*" element={<Navigate replace to="/app/inicio" />} />
       </Routes>
     </BrowserRouter>
   )
