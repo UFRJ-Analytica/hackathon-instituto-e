@@ -18,6 +18,11 @@ import type {
   SerieTemporal,
   Storytelling,
 } from "@/pages/app/emissoes/types"
+import type {
+  MercadoResumo,
+  PontoHistorico,
+  PontoPrevisao,
+} from "@/pages/app/mercado/types"
 
 const BASE = "/api"
 
@@ -102,4 +107,7 @@ export const api = {
   pid: () => get<Record<string, unknown>>("/pid"),
   pidIndustrialMap: () => get<Record<string, unknown>>("/pid/industrializacao/mapa"),
   saibaMais: () => get<Record<string, unknown>>("/saiba-mais"),
+  mercadoResumo: () => get<MercadoResumo>("/mercado/resumo"),
+  mercadoSerieHistorica: () => get<PontoHistorico[]>("/mercado/serie-historica"),
+  mercadoPrevisao: (h = 180) => get<PontoPrevisao[]>(`/mercado/previsao?h=${h}`),
 }
