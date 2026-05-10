@@ -156,16 +156,14 @@ function FitMapToPlanning({
   useEffect(() => {
     if (points.length === 0) {
       map.setView(DEFAULT_CENTER, DEFAULT_ZOOM)
-      return
-    }
-
-    if (points.length === 1) {
+    } else if (points.length === 1) {
       map.setView([points[0].lat, points[0].lon], 7)
-      return
+    } else {
+      const bounds = points.map((point) => [point.lat, point.lon] as [number, number])
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 })
     }
 
-    const bounds = points.map((point) => [point.lat, point.lon] as [number, number])
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 })
+    return () => { map.stop() }
   }, [map, points])
 
   return null

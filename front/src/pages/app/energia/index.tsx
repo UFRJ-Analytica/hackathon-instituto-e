@@ -119,11 +119,12 @@ function FitMapToVisiblePoints({
 
     if (points.length === 1) {
       map.setView([points[0].lat, points[0].lon], 7)
-      return
+    } else {
+      const bounds = points.map((point) => [point.lat, point.lon] as [number, number])
+      map.fitBounds(bounds, { padding: [36, 36], maxZoom: 7 })
     }
 
-    const bounds = points.map((point) => [point.lat, point.lon] as [number, number])
-    map.fitBounds(bounds, { padding: [36, 36], maxZoom: 7 })
+    return () => { map.stop() }
   }, [map, points])
 
   return null

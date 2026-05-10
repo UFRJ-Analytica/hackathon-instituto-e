@@ -32,10 +32,8 @@ function FitMapToBounds({
   const map = useMap()
 
   useEffect(() => {
-    map.fitBounds(bounds, {
-      padding: [24, 24],
-      maxZoom: 7,
-    })
+    map.fitBounds(bounds, { padding: [24, 24], maxZoom: 7 })
+    return () => { map.stop() }
   }, [bounds, map])
 
   return null
