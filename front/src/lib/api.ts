@@ -15,6 +15,7 @@ import type {
 import type {
   EmissaoPorSetor,
   EstadoDashboard,
+  IntensidadeEstado,
   SerieTemporal,
   Storytelling,
 } from "@/pages/app/emissoes/types"
@@ -97,6 +98,7 @@ export const api = {
       body: JSON.stringify({ messages }),
     }).then((r) => r.json() as Promise<{ text: string }>),
   emissoesDashboardEstados: () => get<EstadoDashboard[]>("/emissoes/dashboard/estados"),
+  emissoesIntensidade: () => get<IntensidadeEstado[]>("/emissoes/intensidade"),
   emissoesStorytelling: () => get<Storytelling[]>("/emissoes/dashboard/storytelling"),
   emissoesSerieTemporal: () => get<SerieTemporal[]>("/emissoes/serie-temporal"),
   emissoesSetores: () => get<EmissaoPorSetor[]>("/emissoes/setores"),

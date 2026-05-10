@@ -3,6 +3,15 @@ export type EstadoDashboard = {
   emissao_total: number
   setor_dominante: string
   idd: number
+  emissao_energia: number
+  score_intensidade: number
+}
+
+export type IntensidadeEstado = {
+  estado: string
+  emissao_total: number
+  emissao_energia: number
+  score_intensidade: number
 }
 
 export type Storytelling = {

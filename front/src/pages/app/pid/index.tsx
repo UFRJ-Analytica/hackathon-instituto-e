@@ -7,6 +7,7 @@ import {
   MapPinned,
   PencilRuler,
   Pin,
+  Route,
   Satellite,
   ShieldAlert,
   Trash2,
@@ -43,6 +44,7 @@ type PlanningTool =
   | "pin-oportunidade"
   | "pin-risco"
   | "label"
+  | "connect"
   | "polygon"
 
 type PlanningPointKind = "industria" | "oportunidade" | "risco" | "label"
@@ -61,9 +63,17 @@ type PlanningPolygon = {
   points: [number, number][]
 }
 
+type PlanningConnection = {
+  id: string
+  label: string
+  fromPointId: string
+  toPointId: string
+}
+
 type PlanningState = {
   points: PlanningPoint[]
   polygons: PlanningPolygon[]
+  connections: PlanningConnection[]
   notes: string
   updatedAt: string | null
 }
@@ -94,6 +104,7 @@ const planningTools: Array<{
   { value: "pin-oportunidade", label: "Oportunidade", icon: Pin },
   { value: "pin-risco", label: "Risco", icon: ShieldAlert },
   { value: "label", label: "Texto", icon: Type },
+  { value: "connect", label: "Conectar pontos", icon: Route },
   { value: "polygon", label: "Polígono", icon: PencilRuler },
 ] as const
 
@@ -118,6 +129,8 @@ function PlanningMapInteractions({
       if (activeTool === "view") return
 
       const { lat, lng } = event.latlng
+
+      if (activeTool === "connect") return
 
       if (activeTool === "polygon") {
         onDraftPolygonPoint(lat, lng)
@@ -176,17 +189,27 @@ export default function PIDPage() {
   const [planning, setPlanning] = useState<PlanningState>({
     points: [],
     polygons: [],
+    connections: [],
     notes: "",
     updatedAt: null,
   })
   const [draftPolygon, setDraftPolygon] = useState<[number, number][]>([])
+  const [pendingConnectionStartId, setPendingConnectionStartId] = useState<string | null>(
+    null
+  )
 
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(PLANNING_STORAGE_KEY)
       if (!raw) return
-      const parsed = JSON.parse(raw) as PlanningState
-      setPlanning(parsed)
+      const parsed = JSON.parse(raw) as Partial<PlanningState>
+      setPlanning({
+        points: parsed.points ?? [],
+        polygons: parsed.polygons ?? [],
+        connections: parsed.connections ?? [],
+        notes: parsed.notes ?? "",
+        updatedAt: parsed.updatedAt ?? null,
+      })
     } catch {
       // Ignore corrupted local state and start fresh.
     }
@@ -195,6 +218,12 @@ export default function PIDPage() {
   useEffect(() => {
     window.localStorage.setItem(PLANNING_STORAGE_KEY, JSON.stringify(planning))
   }, [planning])
+
+  useEffect(() => {
+    if (activeTool !== "connect" && pendingConnectionStartId) {
+      setPendingConnectionStartId(null)
+    }
+  }, [activeTool, pendingConnectionStartId])
 
   const focusPoints = useMemo(
     () => [
@@ -205,6 +234,17 @@ export default function PIDPage() {
       ...draftPolygon.map(([lat, lon]) => ({ lat, lon })),
     ],
     [draftPolygon, planning.points, planning.polygons]
+  )
+
+  const pointLookup = useMemo(
+    () =>
+      new Map(
+        planning.points.map((point) => [
+          point.id,
+          point,
+        ])
+      ),
+    [planning.points]
   )
 
   function addPlanningPoint(
@@ -234,6 +274,59 @@ export default function PIDPage() {
     setDraftPolygon((current) => [...current, [lat, lon]])
   }
 
+  function connectPlanningPoints(fromPointId: string, toPointId: string) {
+    if (fromPointId === toPointId) return
+
+    const fromPoint = pointLookup.get(fromPointId)
+    const toPoint = pointLookup.get(toPointId)
+
+    if (!fromPoint || !toPoint) return
+
+    const connectionAlreadyExists = planning.connections.some(
+      (connection) =>
+        (connection.fromPointId === fromPointId && connection.toPointId === toPointId) ||
+        (connection.fromPointId === toPointId && connection.toPointId === fromPointId)
+    )
+
+    if (connectionAlreadyExists) {
+      setPendingConnectionStartId(null)
+      setActiveTool("view")
+      return
+    }
+
+    const defaultLabel = `${fromPoint.label} -> ${toPoint.label}`
+    const label =
+      window.prompt("Nome desta conexão:", defaultLabel)?.trim() || defaultLabel
+
+    setPlanning((current) =>
+      touchPlanningState({
+        ...current,
+        connections: [
+          ...current.connections,
+          {
+            id: crypto.randomUUID(),
+            label,
+            fromPointId,
+            toPointId,
+          },
+        ],
+      })
+    )
+    setPendingConnectionStartId(null)
+    setActiveTool("view")
+  }
+
+  function handlePointClick(pointId: string) {
+    if (activeTool !== "connect") return
+
+    if (!pendingConnectionStartId) {
+      setPendingConnectionStartId(pointId)
+      return
+    }
+
+    connectPlanningPoints(pendingConnectionStartId, pointId)
+  }
+
   function finalizeDraftPolygon() {
     if (draftPolygon.length < 3) return
     const label =
@@ -260,8 +353,15 @@ export default function PIDPage() {
       touchPlanningState({
         ...current,
         points: current.points.filter((point) => point.id !== id),
+        connections: current.connections.filter(
+          (connection) =>
+            connection.fromPointId !== id && connection.toPointId !== id
+        ),
       })
     )
+    if (pendingConnectionStartId === id) {
+      setPendingConnectionStartId(null)
+    }
   }
 
   function removePolygon(id: string) {
@@ -273,16 +373,29 @@ export default function PIDPage() {
     )
   }
 
+  function removeConnection(id: string) {
+    setPlanning((current) =>
+      touchPlanningState({
+        ...current,
+        connections: current.connections.filter(
+          (connection) => connection.id !== id
+        ),
+      })
+    )
+  }
+
   function clearPlanning() {
     setPlanning(
       touchPlanningState({
         points: [],
         polygons: [],
+        connections: [],
         notes: "",
         updatedAt: null,
       })
     )
     setDraftPolygon([])
+    setPendingConnectionStartId(null)
   }
 
   function exportPlanning() {
@@ -378,6 +491,16 @@ export default function PIDPage() {
           <Card className="border-border/70">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground">
+                Conexões
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-semibold">{planning.connections.length}</p>
+            </CardContent>
+          </Card>
+          <Card className="border-border/70">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground">
                 Último salvamento
               </CardTitle>
             </CardHeader>
@@ -461,6 +584,14 @@ export default function PIDPage() {
                 </div>
               )}
 
+              {activeTool === "connect" && (
+                <div className="rounded-xl border border-dashed border-border/70 bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+                  {pendingConnectionStartId
+                    ? "Agora clique em um segundo ponto para criar a ligação."
+                    : "Clique em um ponto existente e depois em outro para criar a ligação."}
+                </div>
+              )}
+
               <div className="grid gap-2">
                 <Button variant="outline" onClick={exportPlanning}>
                   <Download className="size-4" />
@@ -526,16 +657,22 @@ export default function PIDPage() {
 
               {planning.points.map((point) => {
                 const style = pointStyles[point.kind]
+                const isPendingConnectionStart = pendingConnectionStartId === point.id
                 return (
                   <CircleMarker
                     key={point.id}
                     center={[point.lat, point.lon]}
-                    radius={point.kind === "label" ? 6 : 8}
+                    radius={isPendingConnectionStart ? 11 : point.kind === "label" ? 6 : 8}
                     pathOptions={{
-                      color: style.color,
+                      color: isPendingConnectionStart ? "#f59e0b" : style.color,
                       fillColor: style.fillColor,
                       fillOpacity: 0.95,
-                      weight: 2,
+                      weight: isPendingConnectionStart ? 3 : 2,
+                    }}
+                    eventHandlers={{
+                      click() {
+                        handlePointClick(point.id)
+                      },
                     }}
                   >
                     <Tooltip
@@ -545,6 +682,30 @@ export default function PIDPage() {
                       {style.label}: {point.label}
                     </Tooltip>
                   </CircleMarker>
+                )
+              })}
+
+              {planning.connections.map((connection) => {
+                const fromPoint = pointLookup.get(connection.fromPointId)
+                const toPoint = pointLookup.get(connection.toPointId)
+
+                if (!fromPoint || !toPoint) return null
+
+                return (
+                  <Polyline
+                    key={connection.id}
+                    positions={[
+                      [fromPoint.lat, fromPoint.lon],
+                      [toPoint.lat, toPoint.lon],
+                    ]}
+                    pathOptions={{
+                      color: "#f59e0b",
+                      weight: 3,
+                      opacity: 0.9,
+                    }}
+                  >
+                    <Tooltip sticky>{connection.label}</Tooltip>
+                  </Polyline>
                 )
               })}
 
@@ -595,7 +756,9 @@ export default function PIDPage() {
               <CardTitle className="text-base">Itens planejados</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {planning.points.length === 0 && planning.polygons.length === 0 ? (
+              {planning.points.length === 0 &&
+              planning.polygons.length === 0 &&
+              planning.connections.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   Ainda não há itens no plano.
                 </p>
@@ -621,6 +784,38 @@ export default function PIDPage() {
                       </Button>
                     </div>
                   ))}
+
+                  {planning.connections.map((connection) => {
+                    const fromPoint = pointLookup.get(connection.fromPointId)
+                    const toPoint = pointLookup.get(connection.toPointId)
+
+                    return (
+                      <div
+                        key={connection.id}
+                        className="flex items-start justify-between gap-3 rounded-xl border border-border/70 bg-muted/20 px-3 py-2"
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            Conexão
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {connection.label}
+                          </p>
+                          <p className="text-xs text-muted-foreground/80">
+                            {fromPoint?.label ?? "Origem"} {"->"}{" "}
+                            {toPoint?.label ?? "Destino"}
+                          </p>
+                        </div>
+                        <Button
+                          size="icon-xs"
+                          variant="ghost"
+                          onClick={() => removeConnection(connection.id)}
+                        >
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      </div>
+                    )
+                  })}
 
                   {planning.polygons.map((polygon) => (
                     <div

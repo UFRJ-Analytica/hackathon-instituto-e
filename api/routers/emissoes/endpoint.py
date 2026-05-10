@@ -11,6 +11,7 @@ from .service import (
     get_dados_estado,
     get_emissoes_crescimento,
     get_emissoes_dashboard_estados,
+    get_emissoes_intensidade,
     get_emissoes_indices,
     get_emissoes_por_setor,
     get_emissoes_ranking,
@@ -37,6 +38,12 @@ def emissoes_storytelling():
 def emissoes_indices():
     """Índice de Dificuldade de Descarbonização (IDD) completo por estado."""
     return get_emissoes_indices()
+
+
+@router.get("/intensidade")
+def emissoes_intensidade():
+    """Intensidade das emissões de energia por estado."""
+    return get_emissoes_intensidade()
 
 
 @router.get("/ranking")
@@ -86,7 +93,7 @@ Dados disponíveis:
 
 Escreva 2 a 3 parágrafos que:
 1. Contextualizem o estado no cenário nacional de descarbonização, mencionando o IDD (Índice de Dificuldade de Descarbonização) e o que ele significa na prática
-2. Expliquem a evolução histórica das emissões (crescimento ou redução desde 1990) e qual setor é o principal responsável
+2. Expliquem a evolução histórica das emissões (crescimento ou redução desde 1990), qual setor é o principal responsável e se a intensidade de emissões de Energia é alta ou baixa no contexto estadual
 3. Apontem brevemente os principais desafios e caminhos de política pública para a transição do estado
 
 Use linguagem clara e acessível ao público geral. Seja direto e baseado nos dados. Não invente informações além das fornecidas."""

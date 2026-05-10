@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import { api } from "@/lib/api"
 import { useApi } from "@/lib/use-api"
 import { ErrorCard, LoadingCard } from "./components/card-shell"
+import { IntensidadeCard } from "./components/intensidade-card"
 import { KpiSection } from "./components/kpi-section"
 import { RankingCard } from "./components/ranking-card"
 import { SerieTemporalCard } from "./components/serie-temporal-card"
@@ -10,6 +11,7 @@ import { StorytellingCard } from "./components/storytelling-card"
 
 export default function EmissoesPage() {
   const estados = useApi(api.emissoesDashboardEstados)
+  const intensidade = useApi(api.emissoesIntensidade)
   const stories = useApi(api.emissoesStorytelling)
   const serie = useApi(api.emissoesSerieTemporal)
   const setores = useApi(api.emissoesSetores)
@@ -34,7 +36,7 @@ export default function EmissoesPage() {
       {estados.status === "success" && <KpiSection data={estados.data} />}
 
       {/* Ranking + Setores */}
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-4 xl:grid-cols-3">
         {estados.status === "loading" && <LoadingCard title="Ranking de descarbonização" />}
         {estados.status === "error" && (
           <ErrorCard title="Ranking de descarbonização" error={estados.error} />
@@ -46,6 +48,17 @@ export default function EmissoesPage() {
           <ErrorCard title="Emissões por setor" error={setores.error} />
         )}
         {setores.status === "success" && <SetoresCard data={setores.data} />}
+
+        {intensidade.status === "loading" && (
+          <LoadingCard title="Intensidade do setor de energia" />
+        )}
+        {intensidade.status === "error" && (
+          <ErrorCard
+            title="Intensidade do setor de energia"
+            error={intensidade.error}
+          />
+        )}
+        {intensidade.status === "success" && <IntensidadeCard data={intensidade.data} />}
       </div>
 
       {/* Série temporal */}
