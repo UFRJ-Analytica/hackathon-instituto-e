@@ -115,7 +115,7 @@ export function SerieTemporalCard({ data }: { data: SerieTemporal[] }) {
             width={48}
           />
           <Tooltip
-            formatter={(value: number, name: string) => [fmt(value), name]}
+            formatter={(value, name) => [fmt(Number(value)), name as string]}
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,
