@@ -41,9 +41,9 @@ export default function MercadoPage() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6">
       {/* Header */}
       <div className="space-y-2">
-        <Badge variant="outline">Mercado</Badge>
+        <Badge variant="outline">Mercado de Carbono</Badge>
         <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-          Mercado de Descarbonização
+          Mercado de Carbono
         </h2>
         <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
           Acompanhe o Crédito de Descarbonização (CBIO) — preços históricos, volume de
