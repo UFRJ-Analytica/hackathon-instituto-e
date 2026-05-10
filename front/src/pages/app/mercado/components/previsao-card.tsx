@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useState } from "react"
 import {
   ComposedChart,
@@ -35,6 +36,11 @@ function sampleLast(data: PontoHistorico[], n: number) {
     min: undefined as number | undefined,
     max: undefined as number | undefined,
   }))
+}
+
+function formatTooltipLabel(label: ReactNode) {
+  if (typeof label !== "string") return ""
+  return new Date(label).toLocaleDateString("pt-BR")
 }
 
 export function PrevisaoCard({
@@ -120,9 +126,7 @@ export function PrevisaoCard({
               }
               return [fmtPreco(Number(value)), labels[name as string] ?? String(name)]
             }}
-            labelFormatter={(label: string) =>
-              new Date(label).toLocaleDateString("pt-BR")
-            }
+            labelFormatter={formatTooltipLabel}
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,

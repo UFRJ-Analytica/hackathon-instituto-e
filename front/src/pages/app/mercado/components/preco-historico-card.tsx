@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useState, useMemo } from "react"
 import {
   LineChart,
@@ -37,6 +38,11 @@ function sampleData(data: PontoHistorico[], maxPoints = 400): PontoHistorico[] {
   if (data.length <= maxPoints) return data
   const step = Math.ceil(data.length / maxPoints)
   return data.filter((_, i) => i % step === 0 || i === data.length - 1)
+}
+
+function formatTooltipLabel(label: ReactNode) {
+  if (typeof label !== "string") return ""
+  return new Date(label).toLocaleDateString("pt-BR")
 }
 
 export function PrecoHistoricoCard({ data }: { data: PontoHistorico[] }) {
@@ -101,9 +107,7 @@ export function PrecoHistoricoCard({ data }: { data: PontoHistorico[] }) {
           />
           <Tooltip
             formatter={(value) => [fmtPreco(Number(value)), "Preço médio"]}
-            labelFormatter={(label: string) =>
-              new Date(label).toLocaleDateString("pt-BR")
-            }
+            labelFormatter={formatTooltipLabel}
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,

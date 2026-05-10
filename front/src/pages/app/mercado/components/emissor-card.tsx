@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { useMemo } from "react"
 import {
   BarChart,
@@ -26,6 +27,12 @@ function aggregateByMonth(data: PontoHistorico[]) {
   return Array.from(map.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([mes, total]) => ({ mes, total }))
+}
+
+function formatTooltipLabel(label: ReactNode) {
+  if (typeof label !== "string") return ""
+  const [y, m] = label.split("-")
+  return y && m ? `${m}/${y}` : label
 }
 
 export function EmissorCard({ data }: { data: PontoHistorico[] }) {
@@ -65,10 +72,7 @@ export function EmissorCard({ data }: { data: PontoHistorico[] }) {
           />
           <Tooltip
             formatter={(value) => [fmtEmissor(Number(value)), "CBIOs emitidos"]}
-            labelFormatter={(label: string) => {
-              const [y, m] = label.split("-")
-              return `${m}/${y}`
-            }}
+            labelFormatter={formatTooltipLabel}
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,
