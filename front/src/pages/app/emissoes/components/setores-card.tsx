@@ -47,7 +47,7 @@ export function SetoresCard({ data }: { data: EmissaoPorSetor[] }) {
             width={160}
           />
           <Tooltip
-            formatter={(value: number) => [fmt(value), "Emissão total"]}
+            formatter={(value) => [fmt(Number(value)), "Emissão total"]}
             contentStyle={{
               fontSize: 12,
               borderRadius: 8,
