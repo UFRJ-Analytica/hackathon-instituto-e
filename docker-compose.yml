@@ -1,0 +1,26 @@
+services:
+  api:
+    build: ./api
+    env_file: .env
+    restart: unless-stopped
+    networks:
+      - app
+
+  frontend:
+    build: ./front
+    expose:
+      - "80"
+    depends_on:
+      - api
+    restart: unless-stopped
+    networks:
+      - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hacka-emais.entrypoints=websecure"
+      - "traefik.http.routers.hacka-emais.rule=Host(`hacka-emais.cognati.tech`)"
+      - "traefik.http.routers.hacka-emais.tls.certresolver=letsencrypt"
+      - "traefik.http.services.hacka-emais.loadbalancer.server.port=80"
+
+networks:
+  app:
