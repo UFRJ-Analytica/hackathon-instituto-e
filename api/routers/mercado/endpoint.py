@@ -22,6 +22,6 @@ def mercado_serie_historica():
 
 
 @router.get("/previsao")
-def mercado_previsao(h: int = Query(default=180, ge=30, le=365)):
+def mercado_previsao(h: int = Query(default=180, ge=30, le=730)):
     """Previsão de preço via modelo Prophet. Parâmetro h = horizonte em dias (30–365)."""
     return get_previsao(h=h)

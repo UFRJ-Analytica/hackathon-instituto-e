@@ -23,6 +23,8 @@ const HORIZONS: HorizonOption[] = [
   { label: "30 dias", days: 30 },
   { label: "90 dias", days: 90 },
   { label: "180 dias", days: 180 },
+  { label: "1 ano", days: 365 },
+  { label: "2 anos", days: 730 },
 ]
 
 function sampleLast(data: PontoHistorico[], n: number) {
@@ -70,20 +72,21 @@ export function PrevisaoCard({
       subtitle="Previsão com intervalo de confiança. Linha tracejada = horizonte futuro."
     >
       <div className="mb-4 flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">Horizonte:</span>
-        {HORIZONS.map((h, i) => (
-          <button
-            key={h.days}
-            onClick={() => handleHorizon(i)}
-            className={`rounded-full border px-3 py-0.5 text-xs font-medium transition-colors ${
-              horizonIdx === i
-                ? "border-secondary bg-secondary/10 text-secondary"
-                : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-            }`}
-          >
-            {h.label}
-          </button>
-        ))}
+        <label className="text-xs text-muted-foreground" htmlFor="horizon-select">
+          Horizonte:
+        </label>
+        <select
+          id="horizon-select"
+          className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+          value={horizonIdx}
+          onChange={(e) => handleHorizon(Number(e.target.value))}
+        >
+          {HORIZONS.map((h, i) => (
+            <option key={h.days} value={i}>
+              {h.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <ResponsiveContainer width="100%" height={320}>
