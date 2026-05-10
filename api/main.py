@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers.chat import router as chat_router
+from routers.emissoes.endpoint import router as emissoes_router
 from routers.etanol import router as etanol_router
 from routers.pid import router as pid_router
 from routers.pid.service import get_industries_generation_assets, get_pid_industrial_map
@@ -25,6 +26,7 @@ app.add_middleware(
 app.include_router(etanol_router)
 app.include_router(chat_router)
 app.include_router(pid_router)
+app.include_router(emissoes_router)
 
 
 @app.get("/")

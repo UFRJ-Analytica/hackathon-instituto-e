@@ -12,6 +12,12 @@ import type {
   EtanolTemporalResumo,
   EtanolTemporalSerie,
 } from "@/pages/app/etanol/types"
+import type {
+  EmissaoPorSetor,
+  EstadoDashboard,
+  SerieTemporal,
+  Storytelling,
+} from "@/pages/app/emissoes/types"
 
 const BASE = "/api"
 
@@ -85,6 +91,12 @@ export const api = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages }),
     }).then((r) => r.json() as Promise<{ text: string }>),
+  emissoesDashboardEstados: () => get<EstadoDashboard[]>("/emissoes/dashboard/estados"),
+  emissoesStorytelling: () => get<Storytelling[]>("/emissoes/dashboard/storytelling"),
+  emissoesSerieTemporal: () => get<SerieTemporal[]>("/emissoes/serie-temporal"),
+  emissoesSetores: () => get<EmissaoPorSetor[]>("/emissoes/setores"),
+  emissoesNarrativaIA: (estado: string) =>
+    get<{ estado: string; narrativa: string }>(`/emissoes/narrativa/${encodeURIComponent(estado)}`),
   infraestrutura: () => get<Record<string, unknown>>("/infraestrutura"),
   industrias: () => get<Record<string, unknown>>("/industrias"),
   pid: () => get<Record<string, unknown>>("/pid"),

@@ -5,6 +5,7 @@ import EtanolPage from "@/pages/app/etanol"
 import EtanolAnaliseTemporalPage from "@/pages/app/etanol/analise-temporal"
 import EtanolPrevisaoPage from "@/pages/app/etanol/previsao"
 import ChatAIPage from "@/pages/app/chat-ai"
+import EmissoesPage from "@/pages/app/emissoes"
 import EnergiaPage from "@/pages/app/energia"
 import InicioPage from "@/pages/app/inicio"
 import InfraestruturaPage from "@/pages/app/infraestrutura"
@@ -24,6 +25,7 @@ export function App() {
             element={<EtanolAnaliseTemporalPage />}
           />
           <Route path="etanol/previsao" element={<EtanolPrevisaoPage />} />
+          <Route path="emissoes" element={<EmissoesPage />} />
           <Route path="infraestrutura" element={<InfraestruturaPage />} />
           <Route path="energia" element={<EnergiaPage />} />
           <Route path="industrias" element={<IndustriasPage />} />
