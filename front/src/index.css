@@ -3,27 +3,11 @@
 @import "shadcn/tailwind.css";
 @plugin "@tailwindcss/typography";
 
-@font-face {
-  font-family: 'Avenir Next World';
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  src: url('https://js.arcgis.com/4.29/esri/assets/fonts/AvenirNextLTPro-Regular.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Avenir Next World';
-  font-weight: 600 900;
-  font-style: normal;
-  font-display: swap;
-  src: url('https://js.arcgis.com/4.29/esri/assets/fonts/AvenirNextLTPro-Demi.woff2') format('woff2');
-}
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
     --font-heading: var(--font-sans);
-    --font-sans: 'Avenir Next World', 'Avenir Next', Avenir, sans-serif;
+    --font-sans: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
     /* paleta da marca */
     --color-brand-navy: var(--brand-navy);
     --color-brand-orange: var(--brand-orange);

@@ -4,7 +4,7 @@ import { api } from "@/lib/api"
 import { useApi } from "@/lib/use-api"
 
 export default function IndustriasPage() {
-  const state = useApi(api.industrias)
+  const state = useApi(api.pidIndustrialMap)
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6">
@@ -13,28 +13,35 @@ export default function IndustriasPage() {
         <h2 className="text-3xl font-semibold tracking-tight text-foreground">
           Indústrias
         </h2>
-        <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-          Biomassa, biometano, eólica e demais fontes industriais mapeadas,
-          existentes e planejadas.
+        <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+          Esta área fica reservada para a leitura de polos industriais, cadeias
+          produtivas, bioeconomia e concentração territorial da indústria na
+          agenda de descarbonização.
         </p>
       </div>
 
-      <Card className="border-dashed">
+      <Card className="border-border/70">
         <CardHeader>
-          <CardTitle className="text-base text-muted-foreground">
-            Conteúdo da página Indústrias
-          </CardTitle>
+          <CardTitle className="text-base">Direção da tela</CardTitle>
         </CardHeader>
-        <CardContent>
-          {state.status === "loading" && (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
-          )}
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>
+            A experiência de ativos de geração foi separada para a nova tela
+            <span className="font-medium text-foreground"> Energia</span>, porque
+            ela representa fontes e matriz energética, não indústria em si.
+          </p>
+          <p>
+            Aqui a próxima evolução ideal é cruzar dados industriais com
+            território, infraestrutura e potencial de abatimento para mostrar
+            onde a descarbonização produtiva faz mais sentido.
+          </p>
+          {state.status === "loading" && <p>Buscando base territorial de apoio…</p>}
           {state.status === "error" && (
-            <p className="text-sm text-destructive">{state.error}</p>
+            <p className="text-destructive">{state.error}</p>
           )}
           {state.status === "success" && (
-            <p className="text-sm text-muted-foreground">
-              Área reservada para o mapa e dados de indústrias.
+            <p>
+              Base territorial disponível para apoiar a futura modelagem da tela.
             </p>
           )}
         </CardContent>

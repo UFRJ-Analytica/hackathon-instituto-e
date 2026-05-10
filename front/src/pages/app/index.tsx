@@ -54,6 +54,7 @@ const navItems: NavItem[] = [
   { to: "/etanol", label: "Etanol", children: etanolSubItems },
   { to: "/infraestrutura", label: "Infraestrutura" },
   { to: "/industrias", label: "Indústrias" },
+  { to: "/energia", label: "Energia" },
   { to: "/pid", label: "PID" },
   { to: "/saiba-mais", label: "Saiba mais" },
   { to: "/chat-ai", label: "Chat IA" },

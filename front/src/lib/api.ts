@@ -88,5 +88,6 @@ export const api = {
   infraestrutura: () => get<Record<string, unknown>>("/infraestrutura"),
   industrias: () => get<Record<string, unknown>>("/industrias"),
   pid: () => get<Record<string, unknown>>("/pid"),
+  pidIndustrialMap: () => get<Record<string, unknown>>("/pid/industrializacao/mapa"),
   saibaMais: () => get<Record<string, unknown>>("/saiba-mais"),
 }
