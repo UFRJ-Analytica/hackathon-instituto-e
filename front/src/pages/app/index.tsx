@@ -274,7 +274,19 @@ export default function AppLayout() {
 
       {/* ── MAIN ── */}
       <main className="flex-1 overflow-auto bg-muted/40">
-          <Outlet />
+        <Outlet />
+        <footer className="border-t border-border bg-card px-6 py-3">
+          <p className="mx-auto max-w-7xl text-center text-xs text-muted-foreground">
+            Instituto E · Plataforma Interativa de Descarbonização · build{" "}
+            {new Date(__BUILD_DATE__).toLocaleString("pt-BR", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
+        </footer>
       </main>
     </div>
   )
