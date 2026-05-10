@@ -132,7 +132,7 @@ export default function ChatAIPage() {
           <div className="flex gap-2 items-end">
             <Textarea
               placeholder="Digite sua pergunta… (Enter para enviar, Shift+Enter para nova linha)"
-              className="min-h-[44px] max-h-32 resize-none text-sm"
+              className="min-h-11 max-h-32 resize-none text-sm"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKey}
