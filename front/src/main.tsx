@@ -8,7 +8,7 @@ import { LangProvider } from "@/components/lang-provider.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider defaultTheme="light">
       <LangProvider>
         <App />
       </LangProvider>
