@@ -4,6 +4,8 @@ import logoParceiros from "@/assets/logo-parceiros.png"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { api } from "@/lib/api"
+import { useApi } from "@/lib/use-api"
 
 const HERO_GIF = "https://media0.giphy.com/media/9XXMMgyGqACsLc58lq/giphy.gif"
 
@@ -48,6 +50,8 @@ const highlights = [
 ]
 
 export default function InicioPage() {
+  useApi(api.inicio)
+
   return (
     <div className="bg-background">
 

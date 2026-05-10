@@ -1,8 +1,17 @@
 import { useState } from "react"
 import { NavLink, Outlet, useLocation } from "react-router-dom"
-import { Menu } from "lucide-react"
+import { ChevronRight, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
 import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
@@ -14,20 +23,96 @@ import {
 import { LangToggle } from "@/components/lang-toggle"
 import logoPrincipal from "@/assets/logosPDI/SVG/Logo principal.svg"
 
-const navItems = [
+type NavChildItem = {
+  to: string
+  label: string
+  description: string
+}
+
+type NavItem = {
+  to: string
+  label: string
+  children?: NavChildItem[]
+}
+
+const etanolSubItems: NavChildItem[] = [
+  { to: "/etanol", label: "Dashboard", description: "Mapa e panorama atual" },
+  {
+    to: "/etanol/analise-temporal",
+    label: "Análise temporal",
+    description: "Evolução e séries históricas",
+  },
+  {
+    to: "/etanol/previsao",
+    label: "Previsão",
+    description: "Espaço reservado para modelos futuros",
+  },
+] as const
+
+const navItems: NavItem[] = [
   { to: "/", label: "Início" },
+  { to: "/etanol", label: "Etanol", children: etanolSubItems },
   { to: "/infraestrutura", label: "Infraestrutura" },
   { to: "/industrias", label: "Indústrias" },
   { to: "/pid", label: "PID" },
   { to: "/saiba-mais", label: "Saiba mais" },
-] as const
+  { to: "/chat-ai", label: "Chat IA" },
+]
 
 function NavItems() {
   const location = useLocation()
   return (
     <>
       {navItems.map((item) => {
-        const isActive = location.pathname === item.to
+        const isActive =
+          location.pathname === item.to ||
+          (item.children?.some((child) => location.pathname === child.to) ?? false)
+
+        if (item.children) {
+          return (
+            <NavigationMenu key={item.to} viewport={false}>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      isActive
+                        ? "text-secondary"
+                        : "text-muted-foreground hover:text-secondary"
+                    )}
+                  >
+                    {item.label}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="min-w-72 p-2">
+                    <div className="space-y-1">
+                      {item.children.map((child) => {
+                        const childActive = location.pathname === child.to
+
+                        return (
+                          <NavigationMenuLink key={child.to} asChild>
+                            <NavLink
+                              to={child.to}
+                              className={cn(
+                                "block rounded-md px-3 py-2",
+                                childActive ? "bg-muted text-secondary" : ""
+                              )}
+                            >
+                              <p className="text-sm font-medium">{child.label}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {child.description}
+                              </p>
+                            </NavLink>
+                          </NavigationMenuLink>
+                        )
+                      })}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          )
+        }
+
         return (
           <NavLink
             key={item.to}
@@ -52,7 +137,53 @@ function SidebarNavItems({ onClose }: { onClose: () => void }) {
   return (
     <nav className="flex flex-col gap-1">
       {navItems.map((item) => {
-        const isActive = location.pathname === item.to
+        const isActive =
+          location.pathname === item.to ||
+          (item.children?.some((child) => location.pathname === child.to) ?? false)
+
+        if (item.children) {
+          return (
+            <div key={item.to} className="space-y-1">
+              <div
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-4 py-3 text-lg font-medium",
+                  isActive ? "bg-secondary/10 text-secondary" : "text-foreground"
+                )}
+              >
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    isActive ? "bg-secondary" : "bg-border"
+                  )}
+                />
+                {item.label}
+              </div>
+              <div className="ml-4 flex flex-col gap-1">
+                {item.children.map((child) => {
+                  const childActive = location.pathname === child.to
+
+                  return (
+                    <NavLink
+                      key={child.to}
+                      to={child.to}
+                      onClick={onClose}
+                      className={cn(
+                        "flex items-center gap-2 rounded-lg px-4 py-2 text-sm transition-all",
+                        childActive
+                          ? "bg-secondary/10 text-secondary"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                      )}
+                    >
+                      <ChevronRight className="size-3" />
+                      {child.label}
+                    </NavLink>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        }
+
         return (
           <NavLink
             key={item.to}
@@ -87,7 +218,7 @@ export default function AppLayout() {
   return (
     <div className="flex h-svh flex-col">
       {/* ── HEADER ── */}
-      <header className="flex h-[10vh] shrink-0 items-center border-b border-border bg-card">
+      <header className="relative z-50 flex h-[10vh] shrink-0 items-center border-b border-border bg-card">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-6">
           <img
             src={logoPrincipal}

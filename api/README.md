@@ -1,6 +1,6 @@
 # API – Descarbonização Industrial
 
-API de dados de exemplo sobre a indústria de descarbonização brasileira, construída com [FastAPI](https://fastapi.tiangolo.com/).
+API de dados sobre o setor de etanol brasileiro, construída com [FastAPI](https://fastapi.tiangolo.com/).
 
 ## Pré-requisitos
 
@@ -9,7 +9,7 @@ API de dados de exemplo sobre a indústria de descarbonização brasileira, cons
 ## Instalação
 
 ```bash
-# clone o repo e entre na pasta
+# entre na pasta
 cd api
 
 # crie e ative o ambiente virtual
@@ -31,52 +31,120 @@ A API sobe em `http://localhost:8000`.
 
 ## Documentação interativa
 
-| Interface | URL |
-|-----------|-----|
-| Swagger UI | http://localhost:8000/docs |
-| ReDoc | http://localhost:8000/redoc |
+| Interface  | URL                            |
+|------------|-------------------------------|
+| Swagger UI | http://localhost:8000/docs    |
+| ReDoc      | http://localhost:8000/redoc   |
+
+---
 
 ## Endpoints
 
-### Emissões de GEE
+### Dashboard (snapshot do período mais recente)
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/emissoes/por-setor` | Emissões por setor econômico (Mt CO₂e). Aceita `?ano=2022` |
-| GET | `/emissoes/serie-anual` | Série histórica de emissões totais do Brasil |
+| Método | Rota                            | Retorna                                                                 |
+|--------|---------------------------------|-------------------------------------------------------------------------|
+| GET    | `/etanol/card-resumo`           | KPIs gerais: número de usinas, capacidade total, produção total, etc.   |
+| GET    | `/etanol/card-estados`          | Ranking dos 8 estados com maior capacidade instalada                    |
+| GET    | `/etanol/card-mapa`             | Dados agregados por estado para o mapa de calor                         |
+| GET    | `/etanol/card-regioes`          | Agregados por região (Centro-Oeste, Nordeste, etc.)                     |
+| GET    | `/etanol/card-materias-primas`  | Ranking das matérias-primas processadas (cana, milho, etc.)             |
+| GET    | `/etanol/card-usinas`           | As 8 usinas com maior capacidade instalada                              |
 
-### Matriz Energética
+### Análise temporal (séries históricas)
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/energia/matriz-eletrica` | Capacidade instalada por fonte geradora (GW) |
-| GET | `/energia/investimentos-renovaveis` | Investimentos anuais em renováveis (bi USD). Aceita `?ano=2023` |
+| Método | Rota                                | Retorna                                                         |
+|--------|-------------------------------------|-----------------------------------------------------------------|
+| GET    | `/etanol/temporal/resumo`           | Cobertura temporal e último valor das três séries principais    |
+| GET    | `/etanol/temporal/producao`         | Série mensal de produção total, hidratado e anidro (m³)        |
+| GET    | `/etanol/temporal/capacidade`       | Série mensal de capacidade instalada total, hidratado e anidro |
+| GET    | `/etanol/temporal/materias-primas`  | Série total de matéria-prima + quebra do último período         |
+| GET    | `/etanol/temporal/estados`          | Ranking dos 10 estados líderes no período mais recente          |
 
-### Indústria
+### Previsão (modelos preditivos)
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/industria/setores` | Setores industriais com emissões e status de transição |
-| GET | `/industria/kpis` | KPIs consolidados para cards do dashboard |
+Todos os endpoints de previsão aceitam os query params comuns:
 
-### Biocombustíveis
+| Param         | Tipo   | Padrão             | Descrição                                          |
+|---------------|--------|--------------------|----------------------------------------------------|
+| `target`      | string | `production_total` | Série a prever — ver opções em `/etanol/previsao/opcoes` |
+| `scope_type`  | string | `brasil`           | Nível geográfico: `brasil`, `regiao` ou `estado`   |
+| `scope_value` | string | —                  | Valor do recorte quando `scope_type ≠ brasil`      |
+| `horizon`     | int    | `6`                | Meses a projetar (1–24)                            |
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/biocombustiveis/etanol` | Produção e exportação de etanol (série anual) |
-| GET | `/biocombustiveis/biodiesel` | Produção de biodiesel e percentual de blend |
-| GET | `/biocombustiveis/biometano` | Plantas de biometano ativas por estado |
+#### GET `/etanol/previsao/opcoes`
+
+Lista todos os modelos disponíveis, séries alvo, regiões e estados aceitos.
+Útil para popular selects na UI sem hardcodar valores.
+
+#### GET `/etanol/previsao/media-movel`
+
+**Média Móvel** — calcula a média dos últimos `window` pontos e repete recursivamente.
+
+| Param    | Tipo | Padrão | Descrição               |
+|----------|------|--------|-------------------------|
+| `window` | int  | `6`    | Tamanho da janela (2–24) |
+
+#### GET `/etanol/previsao/regressao-linear`
+
+**Regressão Linear** — ajusta uma reta sobre o índice temporal usando `sklearn.LinearRegression`
+e extrapola para os próximos `horizon` períodos.
+Bom para séries com tendência clara e sem sazonalidade marcada.
+
+#### GET `/etanol/previsao/sazonal-ingenua`
+
+**Sazonal Ingênuo** — repete o último ciclo observado de comprimento `season_length`.
+Simples, mas eficaz para séries com sazonalidade estável.
+
+| Param           | Tipo | Padrão | Descrição                   |
+|-----------------|------|--------|-----------------------------|
+| `season_length` | int  | `12`   | Comprimento do ciclo (2–24) |
+
+#### GET `/etanol/previsao/holt-winters`
+
+**Holt-Winters (suavização exponencial tripla)** — modelo clássico de séries temporais
+com componentes de nível, tendência e sazonalidade. Usa `statsmodels.ExponentialSmoothing`.
+Recomendado para séries longas com tendência e sazonalidade anual.
+
+| Param           | Tipo   | Padrão | Descrição                                           |
+|-----------------|--------|--------|-----------------------------------------------------|
+| `season_length` | int    | `12`   | Comprimento do ciclo (2–24)                         |
+| `trend`         | string | `add`  | Componente de tendência: `add`, `mul` ou `none`     |
+| `seasonal`      | string | `add`  | Componente sazonal: `add`, `mul` ou `none`          |
+
+> **Nota:** o modelo precisa de pelo menos dois ciclos completos na série histórica
+> para ajuste com sazonalidade. Caso contrário, retorna HTTP 400.
+
+---
 
 ## Estrutura
 
 ```
 api/
-├── main.py                  # app, CORS e registro dos routers
-├── routers/
-│   ├── emissoes.py
-│   ├── energia.py
-│   ├── industria.py
-│   └── biocombustiveis.py
-├── requirements.txt
-└── README.md
+├── main.py                          # app FastAPI, CORS e registro do router
+├── requirements.txt                 # dependências: fastapi, pandas, numpy, sklearn, statsmodels
+├── README.md
+└── routers/
+    └── etanol/
+        ├── __init__.py
+        ├── endpoint.py              # definição das rotas HTTP
+        ├── service.py               # re-exporta as funções públicas
+        ├── datasets/
+        │   └── pb-da-etanol/        # CSVs de capacidade, produção e matéria-prima
+        └── services/
+            ├── __init__.py          # re-exporta tudo para o endpoint
+            ├── base.py              # helpers: parse_number, sorted_periods, etc.
+            ├── loaders.py           # leitura dos CSVs do dataset
+            ├── dashboard.py         # snapshot do período mais recente
+            ├── temporal.py          # séries históricas
+            └── forecast.py          # modelos preditivos (MM, RL, Sazonal, HW)
 ```
+
+## Stack de ciência de dados
+
+| Biblioteca     | Uso                                              |
+|----------------|--------------------------------------------------|
+| `pandas`       | Manipulação de séries temporais                  |
+| `numpy`        | Operações numéricas e índices para regressão     |
+| `scikit-learn` | Regressão linear (`LinearRegression`)            |
+| `statsmodels`  | Holt-Winters (`ExponentialSmoothing`)            |

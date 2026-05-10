@@ -1,6 +1,10 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import AppLayout from "@/pages/app"
+import EtanolPage from "@/pages/app/etanol"
+import EtanolAnaliseTemporalPage from "@/pages/app/etanol/analise-temporal"
+import EtanolPrevisaoPage from "@/pages/app/etanol/previsao"
+import ChatAIPage from "@/pages/app/chat-ai"
 import InicioPage from "@/pages/app/inicio"
 import InfraestruturaPage from "@/pages/app/infraestrutura"
 import IndustriasPage from "@/pages/app/industrias"
@@ -13,10 +17,17 @@ export function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<InicioPage />} />
+          <Route path="etanol" element={<EtanolPage />} />
+          <Route
+            path="etanol/analise-temporal"
+            element={<EtanolAnaliseTemporalPage />}
+          />
+          <Route path="etanol/previsao" element={<EtanolPrevisaoPage />} />
           <Route path="infraestrutura" element={<InfraestruturaPage />} />
           <Route path="industrias" element={<IndustriasPage />} />
           <Route path="pid" element={<PIDPage />} />
           <Route path="saiba-mais" element={<SaibaMaisPage />} />
+          <Route path="chat-ai" element={<ChatAIPage />} />
         </Route>
         <Route path="*" element={<Navigate replace to="/app/inicio" />} />
       </Routes>
