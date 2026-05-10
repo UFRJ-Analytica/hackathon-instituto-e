@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingCardBody } from "@/components/ui/loading-state"
 import { api } from "@/lib/api"
 import { useApi } from "@/lib/use-api"
 import {
@@ -62,7 +63,7 @@ function LoadingCard({ title }: { title: string }) {
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">Carregando...</p>
+        <LoadingCardBody />
       </CardContent>
     </Card>
   )

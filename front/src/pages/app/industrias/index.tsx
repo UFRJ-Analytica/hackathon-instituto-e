@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingCardBody } from "@/components/ui/loading-state"
 import { api } from "@/lib/api"
 import { useApi } from "@/lib/use-api"
 
@@ -35,7 +36,9 @@ export default function IndustriasPage() {
             território, infraestrutura e potencial de abatimento para mostrar
             onde a descarbonização produtiva faz mais sentido.
           </p>
-          {state.status === "loading" && <p>Buscando base territorial de apoio…</p>}
+          {state.status === "loading" && (
+            <LoadingCardBody label="Buscando base territorial de apoio" lines={3} />
+          )}
           {state.status === "error" && (
             <p className="text-destructive">{state.error}</p>
           )}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingCardBody } from "@/components/ui/loading-state"
 
 export function CardShell({
   title,
@@ -24,7 +25,7 @@ export function CardShell({
 export function LoadingCard({ title }: { title: string }) {
   return (
     <CardShell title={title}>
-      <p className="text-sm text-muted-foreground">Carregando...</p>
+      <LoadingCardBody />
     </CardShell>
   )
 }

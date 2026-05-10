@@ -60,20 +60,22 @@ export function PrecoHistoricoCard({ data }: { data: PontoHistorico[] }) {
       title="Preço médio do CBIO"
       subtitle="Crédito de Descarbonização — histórico de preços"
     >
-      <div className="mb-4 flex gap-1.5">
-        {RANGES.map((r) => (
-          <button
-            key={r.value}
-            onClick={() => setRange(r.value)}
-            className={`rounded-full border px-3 py-0.5 text-xs font-medium transition-colors ${
-              range === r.value
-                ? "border-secondary bg-secondary/10 text-secondary"
-                : "border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground"
-            }`}
-          >
-            {r.label}
-          </button>
-        ))}
+      <div className="mb-4 flex items-center gap-2">
+        <label className="text-xs text-muted-foreground" htmlFor="price-range-select">
+          Período:
+        </label>
+        <select
+          id="price-range-select"
+          className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+          value={range}
+          onChange={(e) => setRange(e.target.value as Range)}
+        >
+          {RANGES.map((r) => (
+            <option key={r.value} value={r.value}>
+              {r.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <ResponsiveContainer width="100%" height={300}>

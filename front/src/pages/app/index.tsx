@@ -51,7 +51,7 @@ const etanolSubItems: NavChildItem[] = [
 
 const navItems: NavItem[] = [
   { to: "/", label: "Início" },
-  { to: "/etanol", label: "Etanol", children: etanolSubItems },
+  { to: "/etanol", label: "Biocombustível", children: etanolSubItems },
   { to: "/emissoes", label: "Emissões" },
   { to: "/mercado", label: "Mercado CBIO" },
   { to: "/infraestrutura", label: "Infraestrutura" },

@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingCardBody } from "@/components/ui/loading-state"
 import { api } from "@/lib/api"
 import { useApi } from "@/lib/use-api"
 
@@ -26,9 +27,7 @@ export default function InfraestruturaPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {state.status === "loading" && (
-            <p className="text-sm text-muted-foreground">Carregando…</p>
-          )}
+          {state.status === "loading" && <LoadingCardBody label="Preparando infraestrutura" />}
           {state.status === "error" && (
             <p className="text-sm text-destructive">{state.error}</p>
           )}
